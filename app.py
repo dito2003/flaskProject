@@ -1,10 +1,9 @@
 from flask import Flask, render_template,flash , redirect, url_for, session, logging, request
 from flask_sqlalchemy import SQLAlchemy
-from datetime import timedelta
+
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///loginregform.sqlite3'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.permanent_session_lifetime = timedelta(seconds=40)
 db = SQLAlchemy(app)
 
 
@@ -13,7 +12,8 @@ class user(db.Model):
     username = db.Column(db.String(100))
     email = db.Column(db.String(100))
     password = db.Column(db.String(100))
-
+    name = db.Column(db.String(100))
+    age = db.Column(db.String(100))
 
 @app.route("/")
 def index():
@@ -31,9 +31,6 @@ def login():
         if not user (user.password, password):
             return redirect(url_for('login'))
             return redirect(url_for('info'))
-        else:
-            if 'client' in session:
-                return redirect(url_for('info'))
 
     return render_template("login.html")
 
@@ -44,8 +41,10 @@ def register():
         uname = request.form['uname']
         email = request.form['email']
         passw = request.form['passw']
+        name =request.form['name']
+        age=request.form['age']
 
-        register = user(username=uname, email=email, password=passw)
+        register = user(username=uname, email=email, password=passw,name=name,age=age,)
         db.session.add(register)
         db.session.commit()
 
